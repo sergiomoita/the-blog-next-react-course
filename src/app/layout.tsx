@@ -1,19 +1,29 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import { Metadata } from "next";
+import { findPostBySlugCached } from "../lib/post/queries";
 
-export const metadata: Metadata = {
-  title: "The blog - Este é um blog com Next.js",
-  description: "Essa seria a descrição dessa página.",
+type PostSlugPageProps = {
+  params: Promise<{ slug: string }>;
 };
 
-type RootLayoutProps = {
-  children: React.ReactNode;
-};
+export async function generateMetadata({
+  params,
+}: PostSlugPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await findPostBySlugCached(slug);
 
-export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
+  return {
+    title: post.title,
+    description: post.excerpt,
+  };
+}
+
+export default async function PostSlugPage({ params }: PostSlugPageProps) {
+  const { slug } = await params;
+  const post = await findPostBySlugCached(slug);
+
   return (
-    <html lang="pt-BR">
-      <body>{children}</body>
-    </html>
+    <div>
+      <p>{post.content}</p>
+    </div>
   );
 }
