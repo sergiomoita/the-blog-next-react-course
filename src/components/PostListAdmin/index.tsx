@@ -1,42 +1,36 @@
-import { findAllPostAdmin } from "@/src/lib/post/queries/admin";
-import clsx from "clsx";
-import { Trash2Icon } from "lucide-react";
-import Link from "next/link";
+import { findAllPublicPostsCached } from "@/src/lib/post/queries/public";
+import { PostCoverImage } from "../PostCoverImage";
+import { PostSummary } from "../PostSummary";
 
-export default async function PostsListAdmin() {
-  const posts = await findAllPostAdmin();
+export async function PostsList() {
+  const posts = await findAllPublicPostsCached();
 
   return (
-    <div className="mb-16">
-      {posts.map((post) => {
+    <div className="grid grid-cols-1 mb-16 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.slice(1).map((post) => {
+        const postLink = `/post/${post.slug}`;
+
         return (
-          <div
-            className={clsx(
-              "py-2 px-2",
-              !post.published && "bg-slate-300",
-              "flex gap-2 items-center justify-between",
-            )}
-            key={post.id}
-          >
-            <Link href={`/admin/post/${post.id}`}>{post.title}</Link>
+          <div className="flex flex-col gap-4 group" key={post.id}>
+            <PostCoverImage
+              linkProps={{
+                href: postLink,
+              }}
+              imageProps={{
+                width: 1200,
+                height: 720,
+                src: post.coverImageUrl,
+                alt: post.title,
+              }}
+            />
 
-            {!post.published && (
-              <span className="text-xs text-slate-600 italic">
-                (Não publicado)
-              </span>
-            )}
-
-            <button
-              className={clsx(
-                "text-red-500 cursor-pointer transition",
-                "[&_svg]:w-4 [&_svg]:h-4",
-                "hover:scale-120 hover:text-red-700",
-              )}
-              aria-label={`Apagar post: ${post.title}`}
-              title={`Apagar post: ${post.title}`}
-            >
-              <Trash2Icon />
-            </button>
+            <PostSummary
+              postLink={postLink}
+              postHeading="h2"
+              createdAt={post.createdAt}
+              excerpt={post.excerpt}
+              title={post.title}
+            />
           </div>
         );
       })}
