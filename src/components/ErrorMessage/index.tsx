@@ -5,17 +5,17 @@ import clsx from "clsx";
 type ErrorMessageProps = {
   pageTitle?: string;
   contentTitle: string;
-  content: string;
+  content: React.ReactNode;
 };
 
-export default function NotFoundPage({
-  pageTitle,
+export default function ErrorMessage({
+  pageTitle = "",
   contentTitle,
   content,
 }: ErrorMessageProps) {
   return (
     <>
-      <title>{pageTitle}</title>
+      {pageTitle && <title>{pageTitle}</title>}
       <div
         className={clsx(
           "min-h-[320px] bg-slate-900 text-slate-100",
@@ -26,7 +26,7 @@ export default function NotFoundPage({
       >
         <div>
           <h1 className="text-7xl/tight mb-4 font-extrabold">{contentTitle}</h1>
-          <p>{content}</p>
+          <div>{content}</div>
         </div>
       </div>
     </>

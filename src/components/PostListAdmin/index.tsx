@@ -1,36 +1,38 @@
-import { findAllPublicPostsCached } from "@/src/lib/post/queries/public";
-import { PostCoverImage } from "../PostCoverImage";
-import { PostSummary } from "../PostSummary";
+import clsx from "clsx";
+import Link from "next/link";
+import { DeletePostButton } from "../admin/DeletePostButton";
+import ErrorMessage from "../ErrorMessage";
+import { findAllPostAdmin } from "@/src/lib/post/queries/admin";
 
-export async function PostsList() {
-  const posts = await findAllPublicPostsCached();
+export default async function PostsListAdmin() {
+  const posts = await findAllPostAdmin();
+
+  if (posts.length <= 0)
+    return (
+      <ErrorMessage contentTitle="Ei 😅" content="Bora criar algum post??" />
+    );
 
   return (
-    <div className="grid grid-cols-1 mb-16 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-      {posts.slice(1).map((post) => {
-        const postLink = `/post/${post.slug}`;
-
+    <div className="mb-16">
+      {posts.map((post) => {
         return (
-          <div className="flex flex-col gap-4 group" key={post.id}>
-            <PostCoverImage
-              linkProps={{
-                href: postLink,
-              }}
-              imageProps={{
-                width: 1200,
-                height: 720,
-                src: post.coverImageUrl,
-                alt: post.title,
-              }}
-            />
+          <div
+            className={clsx(
+              "py-2 px-2",
+              !post.published && "bg-slate-300",
+              "flex gap-2 items-center justify-between",
+            )}
+            key={post.id}
+          >
+            <Link href={`/admin/post/${post.id}`}>{post.title}</Link>
 
-            <PostSummary
-              postLink={postLink}
-              postHeading="h2"
-              createdAt={post.createdAt}
-              excerpt={post.excerpt}
-              title={post.title}
-            />
+            {!post.published && (
+              <span className="text-xs text-slate-600 italic">
+                (Não publicado)
+              </span>
+            )}
+
+            <DeletePostButton id={post.id} title={post.title} />
           </div>
         );
       })}
