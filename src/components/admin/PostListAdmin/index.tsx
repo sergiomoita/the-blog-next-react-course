@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import Link from "next/link";
-import { DeletePostButton } from "../admin/DeletePostButton";
-import ErrorMessage from "../ErrorMessage";
+import { DeletePostButton } from "../DeletePostButton";
+import ErrorMessage from "../../ErrorMessage";
 import { findAllPostAdmin } from "@/src/lib/post/queries/admin";
 
 export default async function PostsListAdmin() {
